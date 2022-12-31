@@ -1,0 +1,1 @@
+# SlackApp_for_Kintai
