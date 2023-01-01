@@ -1,14 +1,15 @@
-from ast import Dict
 import os
 import re
 import logging
 from datetime import datetime, timezone, timedelta
-from typing import List
+from typing import Dict, List
+
 from slack_bolt import App
 from slack_bolt.adapter.aws_lambda import SlackRequestHandler
 from slack_bolt.response.response import BoltResponse
 
 import notion as notion
+
 
 logging.basicConfig(level=logging.DEBUG)
 

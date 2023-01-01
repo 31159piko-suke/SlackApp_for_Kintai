@@ -1,9 +1,9 @@
-from datetime import datetime
-import json
 import os
-from typing import Dict, List
+import json
 import logging
+from typing import Dict, List
 import requests
+
 
 API_SECRET = os.environ.get("API_SECRET")
 HEADERS = {
@@ -31,14 +31,11 @@ def create_page(
     tags: List[str] = [],
     title: str = "Title",
 ) -> None:
+    URL = os.environ.get("URL")
     body = {
         "parent": {"database_id": database_id},
         "icon": {"emoji": "🚀"},
-        "cover": {
-            "external": {
-                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Abra%C3%A7ando_as_Estrelas.jpg/1024px-Abra%C3%A7ando_as_Estrelas.jpg"
-            }
-        },
+        "cover": {"external": {"url": URL}},
         "properties": {
             "Name": {"title": [{"text": {"content": title}}]},
             "Tags": {"multi_select": [{"name": i} for i in tags]},
