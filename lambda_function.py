@@ -18,7 +18,9 @@ app = App(
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
 )
 
-t_delta = timedelta(hours=5)  # 日本時間朝4:00に日付更新
+t_delta_ = timedelta(hours=5)  # 日本時間朝4:00に日付更新
+JST_ = timezone(t_delta_, "JST")
+t_delta = timedelta(hours=9)
 JST = timezone(t_delta, "JST")
 MONTH = {
     "1": "JAN",
@@ -44,7 +46,7 @@ def lambda_handler(event, context):
 
 
 @app.use
-def no_retry(context, next):
+def no_retry(body, context, next):
     if context.get("lambda_request", {}).get("headers", {}).get("x-slack-retry-num", False):
         return BoltResponse(status=200, body="no need retry")
     else:
@@ -53,6 +55,10 @@ def no_retry(context, next):
 
 def push_button(say, body, logger):
     logger.info(body)
+    if body["event"]["user"] != os.environ.get("USER_ID"):
+        logger.warning(f"{body['event']['user']} try to push the button.")
+        return BoltResponse(status=200)
+
     channel: str = body["event"]["channel"]
 
     say(
@@ -73,7 +79,7 @@ def push_button(say, body, logger):
         ],
     )
 
-    date: str = f"{datetime.now(JST).day}日"
+    date: str = f"{datetime.now(JST_).day}日"
     results: Dict[str, str] = notion.get_pages_from_database(database_id)
     titles: List[str] = [result["properties"]["Name"]["title"][0]["plain_text"] for result in results]
 
@@ -85,6 +91,10 @@ def push_button(say, body, logger):
 
 def syukkin_button(body, client, logger):
     logger.info(body)
+    if body["user"]["id"] != os.environ.get("USER_ID"):
+        logger.warning(f"{body['user']['id']} try to push the button.")
+        return BoltResponse(status=200)
+
     channel: str = body["channel"]["id"]
     ts: str = body["message"]["ts"]
 
@@ -121,6 +131,10 @@ def syukkin_button(body, client, logger):
 
 def taikin_button(body, client, logger):
     logger.info(body)
+    if body["user"]["id"] != os.environ.get("USER_ID"):
+        logger.warning(f"{body['user']['id']} try to push the button.")
+        return BoltResponse(status=200)
+
     channel: str = body["channel"]["id"]
     ts: str = body["message"]["ts"]
 
@@ -164,6 +178,10 @@ def taikin_button(body, client, logger):
 
 def message(body, message, client, logger):
     logger.info(body)
+    if body["event"]["user"] != os.environ.get("USER_ID"):
+        logger.warning(f"{body['event']['user']} try to send messages.")
+        return BoltResponse(status=200)
+
     channel: str = body["event"]["channel"]
     ts: str = body["event"]["ts"]
 
