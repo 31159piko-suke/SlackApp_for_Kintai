@@ -20,7 +20,7 @@
 <img src="./image/6.png" width="75%">
 </br>
 
-### **Notion でまとめて管理**
+### **Notionで勤務時間と進捗をまとめて管理**
 
 <img src="./image/5.png" width="50%"><img src="./image/9.png" width="35%">
 </br>
