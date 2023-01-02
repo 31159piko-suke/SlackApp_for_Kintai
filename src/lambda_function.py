@@ -11,7 +11,7 @@ from slack_bolt.response.response import BoltResponse
 import notion as notion
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
@@ -62,7 +62,7 @@ def push_button(say, body, logger):
             {
                 "type": "section",
                 "block_id": "new",
-                "text": {"type": "mrkdwn", "text": "おつおつ"},
+                "text": {"type": "mrkdwn", "text": "出勤はまだか。"},
                 "accessory": {
                     "type": "button",
                     "text": {"type": "plain_text", "text": "出勤", "emoji": True},
@@ -100,7 +100,7 @@ def syukkin_button(body, client, logger):
             {
                 "type": "section",
                 "block_id": syukkin_time,
-                "text": {"type": "mrkdwn", "text": "おつおつ"},
+                "text": {"type": "mrkdwn", "text": "おつおつ。"},
                 "accessory": {
                     "type": "button",
                     "text": {"type": "plain_text", "text": "退勤", "emoji": True},
@@ -109,6 +109,13 @@ def syukkin_button(body, client, logger):
                 },
             }
         ],
+    )
+    client.users_profile_set(
+        token=os.environ.get("SLACK_USER_TOKEN"),
+        profile={
+            "status_text": "作業ちう",
+            "status_emoji": ":hamster:",
+        },
     )
 
 
@@ -131,7 +138,7 @@ def taikin_button(body, client, logger):
             {
                 "type": "section",
                 "block_id": "taikin",
-                "text": {"type": "mrkdwn", "text": "おつおつ"},
+                "text": {"type": "mrkdwn", "text": "お疲れ様やな。"},
                 "accessory": {
                     "type": "button",
                     "text": {"type": "plain_text", "text": "出勤", "emoji": True},
@@ -141,6 +148,13 @@ def taikin_button(body, client, logger):
             }
         ],
     )
+    client.users_profile_set(
+        token=os.environ.get("SLACK_USER_TOKEN"),
+        profile={
+            "status_text": "",
+            "status_emoji": "",
+        },
+    )
 
     date: str = f"{datetime.now(JST).day}日"
     results: Dict = notion.get_pages_from_database(database_id)
@@ -148,8 +162,11 @@ def taikin_button(body, client, logger):
     notion.update_time_property(ids[date], kinmu_time // 60)
 
 
-def message(body, message, logger):
+def message(body, message, client, logger):
     logger.info(body)
+    channel: str = body["event"]["channel"]
+    ts: str = body["event"]["ts"]
+
     date: str = f"{datetime.now(JST).day}日"
     results: Dict = notion.get_pages_from_database(database_id)
     ids: Dict[str:str] = {result["properties"]["Name"]["title"][0]["plain_text"]: result["id"] for result in results}
@@ -172,6 +189,12 @@ def message(body, message, logger):
 
     notion.update_tags_property(ids[date], tags)
     notion.add_progress(ids[date], progress)
+
+    client.reactions_add(
+        channel=channel,
+        timestamp=ts,
+        name="thumbsup",
+    )
 
 
 def arc_func(ack):
