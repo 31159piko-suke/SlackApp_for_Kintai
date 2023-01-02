@@ -1,21 +1,21 @@
 # SlackAppforKintai
 
-<img src="./image/3.png" width="200" height="100">
-<img src="./image/5.png" width="200" height="100">
+<img src="./image/3.png" width="75%">
+<img src="./image/5.png" width="75%">
 
 # Slack と Notion で勤怠・進捗管理ができるアプリ
 
 メンションすることで出勤ボタンを表示  
-![](./image/1.png)
+<img src="./image/1.png" width="75%">
 
 スレッドで出勤退勤時間を表示  
-![](./image/4.png)
+<img src="./image/4.png" width="75%">
 
 勤務中はステータスを変更  
-![](./image/6.png)
+<img src="./image/6.png" width="75%">
 
 []でタグづけた項目と出勤から退勤までの時間を記録  
-![](./image/8.png)
+<img src="./image/8.png" width="75%">
 
 ### **使用技術**
 
