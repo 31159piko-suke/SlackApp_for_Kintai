@@ -37,7 +37,7 @@ MONTH = {
     "12": "DEC",
 }
 
-database_id = os.environ.get(MONTH[str(datetime.now(JST).month)])
+database_id = os.environ.get(MONTH[str(datetime.now(JST_).month)])
 
 
 def lambda_handler(event, context):
@@ -46,7 +46,7 @@ def lambda_handler(event, context):
 
 
 @app.use
-def no_retry(body, context, next):
+def no_retry(context, next):
     if context.get("lambda_request", {}).get("headers", {}).get("x-slack-retry-num", False):
         return BoltResponse(status=200, body="no need retry")
     else:
